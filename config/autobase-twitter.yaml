@@ -1,0 +1,13 @@
+server:
+  port: 5000
+  debug: true
+  read_timeout_seconds: 10
+  write_timeout_seconds: 5
+
+params:
+
+twitter_key:
+  consumer_key: ""
+  consumer_secret: ""
+  access_token: ""
+  access_token_secret: ""
