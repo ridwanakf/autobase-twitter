@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ridwanakf/autobase-twitter/internal/delivery/rest"
 	"log"
 
 	"github.com/ridwanakf/autobase-twitter/internal/app"
@@ -19,4 +20,5 @@ func main() {
 		}
 	}()
 
+	rest.Start(AutobaseApp)
 }
