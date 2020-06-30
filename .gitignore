@@ -6,7 +6,8 @@
 *.dylib
 
 # Ignore Golang's Compiled binaries
-/autobase-twitter
+/autobase-twitter-worker
+/autobase-twitter-api
 
 # Test binary, built with `go test -c`
 *.test
