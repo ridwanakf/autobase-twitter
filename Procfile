@@ -10,5 +10,5 @@
 // (Heroku won't put app to sleep if it only contains "worker" process).
 
 
-// web: bin/rest
-worker: bin/worker
+web: bin/rest
+// worker: bin/worker
