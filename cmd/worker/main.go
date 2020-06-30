@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/ridwanakf/autobase-twitter/internal/app"
-	"github.com/ridwanakf/autobase-twitter/internal/delivery/rest"
+	"github.com/ridwanakf/autobase-twitter/internal/delivery/worker"
 )
 
 func main() {
@@ -20,5 +20,5 @@ func main() {
 		}
 	}()
 
-	rest.Start(AutobaseApp)
+	worker.Start(AutobaseApp)
 }
