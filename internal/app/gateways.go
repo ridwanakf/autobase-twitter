@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/ridwanakf/autobase-twitter/internal"
 	"github.com/ridwanakf/autobase-twitter/internal/app/config"
+	"github.com/ridwanakf/autobase-twitter/internal/gateway"
 )
 
 type Gateways struct {
@@ -11,6 +12,7 @@ type Gateways struct {
 
 func newGateways(cfg *config.Config) *Gateways {
 	return &Gateways{
+		AutobaseGW: gateway.NewAutobaseGateway(cfg.Twitter),
 	}
 }
 

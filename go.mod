@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/caarlos0/env/v6 v6.3.0
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
-	github.com/dghubble/oauth1 v0.6.0 // indirect
+	github.com/dghubble/oauth1 v0.6.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible
