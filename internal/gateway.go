@@ -2,6 +2,7 @@ package internal
 
 import (
 	"github.com/dghubble/go-twitter/twitter"
+	"github.com/ridwanakf/bridges/twitter/media"
 )
 
 type AutobaseGW interface {
@@ -13,5 +14,5 @@ type AutobaseGW interface {
 	Tweet(text string) (twitter.Tweet, error)
 	TweetWithMedia(text string, params twitter.StatusUpdateParams) (twitter.Tweet, error)
 	DownloadMedia(url string, mediaType string) ([]byte, error)
-	UploadMedia(file []byte, mimetype string) twitter.MediaEntity
+	UploadMedia(file []byte, mimetype string) media.Media
 }
