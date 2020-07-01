@@ -30,14 +30,8 @@ type AutobaseUC interface {
 	DeleteMessage(messageID string) error
 
 	// ProcessBatchTweet is a method to process multiple Tweets
-	ProcessBatchTweet(messages []twitter.DirectMessageEvent) ([]twitter.StatusUpdateParams, error)
+	ProcessBatchTweet(messages []twitter.DirectMessageEvent) ([]twitter.Tweet, error)
 
 	// ProcessTweet is a method to process a single Tweet
-	ProcessTweet(messages twitter.DirectMessageEvent) (twitter.StatusUpdateParams, error)
-
-	// SendBatchTweet is a method to send a multiple Tweets
-	SendBatchTweet(messages []twitter.DirectMessageEvent) ([]twitter.Tweet, error)
-
-	// SendTweet is a method to send a single Tweet
-	SendTweet(text string, params twitter.StatusUpdateParams) (twitter.Tweet, error)
+	ProcessTweet(messages twitter.DirectMessageEvent) (twitter.Tweet, error)
 }
