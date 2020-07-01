@@ -21,7 +21,7 @@ type AutobaseUC interface {
 	FilterMessage(keyword string, messages []twitter.DirectMessageEvent) (correctMessages, incorrectMessages []twitter.DirectMessageEvent)
 
 	// SendMessage is a method to send Direct Message
-	SendMessage(recipientID string, text string, params twitter.DirectMessageEventsNewParams) (twitter.Tweet, error)
+	SendMessage(recipientID string, text string, params twitter.DirectMessageEventsNewParams) error
 
 	// DeleteBatchMessage is a method to delete multiple Direct Messages
 	DeleteBatchMessage(messageID []string) error
@@ -30,11 +30,14 @@ type AutobaseUC interface {
 	DeleteMessage(messageID string) error
 
 	// ProcessBatchTweet is a method to process multiple Tweets
-	ProcessBatchTweet(messages []twitter.DirectMessageEvent)
+	ProcessBatchTweet(messages []twitter.DirectMessageEvent) ([]twitter.StatusUpdateParams, error)
 
 	// ProcessTweet is a method to process a single Tweet
-	ProcessTweet(messages twitter.DirectMessageEvent)
+	ProcessTweet(messages twitter.DirectMessageEvent) (twitter.StatusUpdateParams, error)
+
+	// SendBatchTweet is a method to send a multiple Tweets
+	SendBatchTweet(messages []twitter.DirectMessageEvent) ([]twitter.Tweet, error)
 
 	// SendTweet is a method to send a single Tweet
-	SendTweet(text string, params twitter.StatusUpdateParams)
+	SendTweet(text string, params twitter.StatusUpdateParams) (twitter.Tweet, error)
 }
