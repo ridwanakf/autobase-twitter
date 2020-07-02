@@ -104,7 +104,7 @@ func (u *AutobaseUsecase) ProcessTweet(message twitter.DirectMessageEvent) (twit
 
 		response, err := u.gw.UploadMedia(file, mediaURL)
 		if err != nil {
-			log.Fatal(err)
+			return twitter.Tweet{}, err
 		}
 
 		tweetParams.MediaIds = []int64{response.MediaID}

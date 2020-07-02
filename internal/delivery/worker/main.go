@@ -42,7 +42,7 @@ func Start(app *app.AutobaseApp) {
 		messages, err := svc.GetMessages(messageCount)
 		if err != nil {
 			if strings.Contains(strings.ToLower(err.Error()), "88 rate limit exceeded") {
-				log.Printf("Rate limit has been reached!. Will sleep for %v.", ratelimitDuration)
+				log.Printf("Rate limit has been reached! Will sleep for %v.", ratelimitDuration)
 				time.Sleep(ratelimitDuration)
 				continue
 			} else {
@@ -70,9 +70,11 @@ func Start(app *app.AutobaseApp) {
 					continue
 				}
 
+				// TODO: Cek jumlah karakter pesan
 				// Send tweet
 				_, err = svc.SendTweet(message)
 				if err != nil {
+					log.Printf("error when tweeting %+v", err)
 					failedMessages = append(failedMessages, message)
 					continue
 				}
