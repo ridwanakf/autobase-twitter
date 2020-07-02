@@ -70,7 +70,6 @@ func Start(app *app.AutobaseApp) {
 					continue
 				}
 
-				// TODO: Cek jumlah karakter pesan
 				// Send tweet
 				_, err = svc.SendTweet(message)
 				if err != nil {

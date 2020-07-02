@@ -96,6 +96,10 @@ func (u *AutobaseUsecase) ProcessTweet(message twitter.DirectMessageEvent) (twit
 		tweetParams = &twitter.StatusUpdateParams{}
 		mediaURL := message.Message.Data.Attachment.Media.MediaURLHttps
 		mediaType := message.Message.Data.Attachment.Type
+		status = strings.ReplaceAll(message.Message.Data.Text, message.Message.Data.Attachment.Media.URL, "")
+		if len(status) > 280 {
+			return twitter.Tweet{}, errors.New("error when sending tweet: DM is longer than 280 characters")
+		}
 
 		file, err := u.gw.DownloadMedia(mediaURL, mediaType)
 		if err != nil {
@@ -108,9 +112,11 @@ func (u *AutobaseUsecase) ProcessTweet(message twitter.DirectMessageEvent) (twit
 		}
 
 		tweetParams.MediaIds = []int64{response.MediaID}
-		status = strings.ReplaceAll(message.Message.Data.Text, message.Message.Data.Attachment.Media.URL, "")
 	} else {
 		status = message.Message.Data.Text
+		if len(status) > 280 {
+			return twitter.Tweet{}, errors.New("error when sending tweet: DM is longer than 280 characters")
+		}
 	}
 
 	tweet, err := u.gw.Tweet(status, tweetParams)
