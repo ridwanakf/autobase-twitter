@@ -60,17 +60,24 @@ func (u *AutobaseUsecase) FilterMessage(keyword string, messages []twitter.Direc
 	return correct, incorrect
 }
 
-func (u *AutobaseUsecase) SendMessage(recipientID string, text string, params twitter.DirectMessageEventMessage) error {
-	params.Target.RecipientID = recipientID
-	params.Data.Text = text
-	return u.gw.SendMessage(params)
+func (u *AutobaseUsecase) SendBatchMessage(params []twitter.DirectMessageEventMessage) {
+	for _, param := range params {
+		err := u.SendMessage(param)
+		if err != nil {
+			log.Printf("error when sending message: %+v", err)
+		}
+	}
+}
+
+func (u *AutobaseUsecase) SendMessage(param twitter.DirectMessageEventMessage) error {
+	return u.gw.SendMessage(param)
 }
 
 func (u *AutobaseUsecase) DeleteBatchMessage(messageIDs []string) {
 	for _, messageID := range messageIDs {
 		err := u.DeleteMessage(messageID)
 		if err != nil {
-			log.Println("error when deleting message")
+			log.Printf("error when deleting message: %+v", err)
 		}
 	}
 }
@@ -81,8 +88,8 @@ func (u *AutobaseUsecase) DeleteMessage(messageID string) error {
 
 func (u *AutobaseUsecase) ProcessTweet(message twitter.DirectMessageEvent) (twitter.Tweet, error) {
 	var (
-		tweetParams  *twitter.StatusUpdateParams
-		status       string
+		tweetParams *twitter.StatusUpdateParams
+		status      string
 	)
 
 	if message.Message.Data.Attachment != nil {
