@@ -76,16 +76,8 @@ func (g *AutobaseGateway) DeleteMessage(messageID string) error {
 	return err
 }
 
-func (g *AutobaseGateway) Tweet(text string) (twitter.Tweet, error) {
-	tweet, _, err := g.twitterClient.Statuses.Update(text, nil)
-	if err != nil {
-		return twitter.Tweet{}, err
-	}
-	return *tweet, nil
-}
-
-func (g *AutobaseGateway) TweetWithMedia(text string, params twitter.StatusUpdateParams) (twitter.Tweet, error) {
-	tweet, _, err := g.twitterClient.Statuses.Update(text, &params)
+func (g *AutobaseGateway) Tweet(text string, params *twitter.StatusUpdateParams) (twitter.Tweet, error) {
+	tweet, _, err := g.twitterClient.Statuses.Update(text, params)
 	if err != nil {
 		return twitter.Tweet{}, err
 	}
