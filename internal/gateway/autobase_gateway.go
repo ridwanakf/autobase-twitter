@@ -1,7 +1,11 @@
 package gateway
 
 import (
+	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -32,37 +36,116 @@ func NewAutobaseGateway(cfg config.TwitterKey) *AutobaseGateway {
 }
 
 func (g *AutobaseGateway) GetUserInfo() (twitter.User, error) {
-	panic("implement me!")
+	user, _, err := g.twitterClient.Accounts.VerifyCredentials(nil)
+	if err != nil {
+		return twitter.User{}, err
+	}
+	return *user, nil
 }
 
 func (g *AutobaseGateway) ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error) {
-	panic("implement me!")
+	messages, _, err := g.twitterClient.DirectMessages.EventsList(
+		&twitter.DirectMessageEventsListParams{Count: count},
+	)
+	if err != nil {
+		return []twitter.DirectMessageEvent{}, err
+	}
+	return messages.Events, nil
 }
 
 func (g *AutobaseGateway) ReadMessage(messageID string) (twitter.DirectMessageEvent, error) {
-	panic("implement me!")
+	message, _, err := g.twitterClient.DirectMessages.EventsShow(messageID, nil)
+	if err != nil {
+		return twitter.DirectMessageEvent{}, err
+	}
+	return *message, nil
 }
 
-func (g *AutobaseGateway) SendMessage(recipientID string, text string, params twitter.DirectMessageEventsNewParams) error {
-	panic("implement me!")
+func (g *AutobaseGateway) SendMessage(params twitter.DirectMessageEventMessage) error {
+	_, _, err := g.twitterClient.DirectMessages.EventsNew(&twitter.DirectMessageEventsNewParams{
+		Event: &twitter.DirectMessageEvent{
+			Type:    "message_create",
+			Message: &params,
+		},
+	})
+	return err
 }
 
 func (g *AutobaseGateway) DeleteMessage(messageID string) error {
-	panic("implement me!")
+	_, err := g.twitterClient.DirectMessages.EventsDestroy(messageID)
+	return err
 }
 
 func (g *AutobaseGateway) Tweet(text string) (twitter.Tweet, error) {
-	panic("implement me!")
+	tweet, _, err := g.twitterClient.Statuses.Update(text, nil)
+	if err != nil {
+		return twitter.Tweet{}, err
+	}
+	return *tweet, nil
 }
 
 func (g *AutobaseGateway) TweetWithMedia(text string, params twitter.StatusUpdateParams) (twitter.Tweet, error) {
-	panic("implement me!")
+	tweet, _, err := g.twitterClient.Statuses.Update(text, &params)
+	if err != nil {
+		return twitter.Tweet{}, err
+	}
+	return *tweet, nil
 }
 
 func (g *AutobaseGateway) DownloadMedia(url string, mediaType string) ([]byte, error) {
-	panic("implement me!")
+	var (
+		fileByte []byte
+		filename string
+	)
+
+	switch mediaType {
+	case "photo":
+		filename = "image.png"
+	case "video":
+		filename = "video.mp4"
+	case "theTypeOfGifs":
+		filename = "animation.gif"
+	}
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return fileByte, err
+	}
+
+	resp, err := g.oauthClient.Get(url)
+	if err != nil {
+		return fileByte, err
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return fileByte, err
+	}
+	defer file.Close()
+
+	err = os.Remove(filename)
+	if err != nil {
+		log.Println("ERROR WHEN REMOVING FILE")
+	}
+
+	fileByte, err = ioutil.ReadFile(filename)
+	if err != nil {
+		return fileByte, err
+	}
+	return fileByte, nil
 }
 
-func (g *AutobaseGateway) UploadMedia(file []byte, mimetype string) media.Media {
-	panic("implement me!")
+func (g *AutobaseGateway) UploadMedia(file []byte, mimetype string) (media.Media, error) {
+	client := media.NewService(g.oauthClient)
+	mediaUpload := &media.UploadParams{
+		File:     file,
+		MimeType: mimetype,
+	}
+
+	response, _, err := client.Upload(mediaUpload)
+	if err != nil {
+		return media.Media{}, err
+	}
+	return *response, nil
 }

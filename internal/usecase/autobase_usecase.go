@@ -35,7 +35,7 @@ func (u *AutobaseUsecase) FilterMessage(keyword string, messages []twitter.Direc
 	panic("implement me!")
 }
 
-func (u *AutobaseUsecase) SendMessage(recipientID string, text string, params twitter.DirectMessageEventsNewParams) error {
+func (u *AutobaseUsecase) SendMessage(recipientID string, text string, params twitter.DirectMessageEventMessage) error {
 	panic("implement me!")
 }
 
