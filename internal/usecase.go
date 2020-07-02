@@ -21,7 +21,7 @@ type AutobaseUC interface {
 	FilterMessage(keyword string, messages []twitter.DirectMessageEvent) (correctMessages, incorrectMessages []twitter.DirectMessageEvent)
 
 	// SendMessage is a method to send Direct Message
-	SendMessage(recipientID string, text string, params twitter.DirectMessageEventsNewParams) error
+	SendMessage(recipientID string, text string, params twitter.DirectMessageEventMessage) error
 
 	// DeleteBatchMessage is a method to delete multiple Direct Messages
 	DeleteBatchMessage(messageID []string) error
