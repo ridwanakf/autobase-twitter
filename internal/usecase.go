@@ -20,8 +20,11 @@ type AutobaseUC interface {
 	// FilterMessage is a method to filter out Direct Messages that don't contain specific keyword
 	FilterMessage(keyword string, messages []twitter.DirectMessageEvent) (correctMessages, incorrectMessages []twitter.DirectMessageEvent)
 
+	// SendBatchMessage is a method to send multiple Direct Message
+	SendBatchMessage(params []twitter.DirectMessageEventMessage)
+
 	// SendMessage is a method to send Direct Message
-	SendMessage(recipientID string, text string, params twitter.DirectMessageEventMessage) error
+	SendMessage(param twitter.DirectMessageEventMessage) error
 
 	// DeleteBatchMessage is a method to delete multiple Direct Messages
 	DeleteBatchMessage(messageIDs []string)

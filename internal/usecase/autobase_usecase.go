@@ -60,17 +60,24 @@ func (u *AutobaseUsecase) FilterMessage(keyword string, messages []twitter.Direc
 	return correct, incorrect
 }
 
-func (u *AutobaseUsecase) SendMessage(recipientID string, text string, params twitter.DirectMessageEventMessage) error {
-	params.Target.RecipientID = recipientID
-	params.Data.Text = text
-	return u.gw.SendMessage(params)
+func (u *AutobaseUsecase) SendBatchMessage(params []twitter.DirectMessageEventMessage) {
+	for _, param := range params {
+		err := u.SendMessage(param)
+		if err != nil {
+			log.Printf("error when sending message: %+v", err)
+		}
+	}
+}
+
+func (u *AutobaseUsecase) SendMessage(param twitter.DirectMessageEventMessage) error {
+	return u.gw.SendMessage(param)
 }
 
 func (u *AutobaseUsecase) DeleteBatchMessage(messageIDs []string) {
 	for _, messageID := range messageIDs {
 		err := u.DeleteMessage(messageID)
 		if err != nil {
-			log.Println("error when deleting message")
+			log.Printf("error when deleting message: %+v", err)
 		}
 	}
 }
@@ -81,14 +88,18 @@ func (u *AutobaseUsecase) DeleteMessage(messageID string) error {
 
 func (u *AutobaseUsecase) ProcessTweet(message twitter.DirectMessageEvent) (twitter.Tweet, error) {
 	var (
-		tweetParams  *twitter.StatusUpdateParams
-		status       string
+		tweetParams *twitter.StatusUpdateParams
+		status      string
 	)
 
 	if message.Message.Data.Attachment != nil {
 		tweetParams = &twitter.StatusUpdateParams{}
 		mediaURL := message.Message.Data.Attachment.Media.MediaURLHttps
 		mediaType := message.Message.Data.Attachment.Type
+		status = strings.ReplaceAll(message.Message.Data.Text, message.Message.Data.Attachment.Media.URL, "")
+		if len(status) > 280 {
+			return twitter.Tweet{}, errors.New("error when sending tweet: DM is longer than 280 characters")
+		}
 
 		file, err := u.gw.DownloadMedia(mediaURL, mediaType)
 		if err != nil {
@@ -97,13 +108,15 @@ func (u *AutobaseUsecase) ProcessTweet(message twitter.DirectMessageEvent) (twit
 
 		response, err := u.gw.UploadMedia(file, mediaURL)
 		if err != nil {
-			log.Fatal(err)
+			return twitter.Tweet{}, err
 		}
 
 		tweetParams.MediaIds = []int64{response.MediaID}
-		status = strings.ReplaceAll(message.Message.Data.Text, message.Message.Data.Attachment.Media.URL, "")
 	} else {
 		status = message.Message.Data.Text
+		if len(status) > 280 {
+			return twitter.Tweet{}, errors.New("error when sending tweet: DM is longer than 280 characters")
+		}
 	}
 
 	tweet, err := u.gw.Tweet(status, tweetParams)

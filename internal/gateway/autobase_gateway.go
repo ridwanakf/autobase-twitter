@@ -97,6 +97,8 @@ func (g *AutobaseGateway) DownloadMedia(url string, mediaType string) ([]byte, e
 		filename = "video.mp4"
 	case "theTypeOfGifs":
 		filename = "animation.gif"
+	default:
+		filename = "image.png"
 	}
 
 	file, err := os.Create(filename)
@@ -116,15 +118,16 @@ func (g *AutobaseGateway) DownloadMedia(url string, mediaType string) ([]byte, e
 	}
 	defer file.Close()
 
+	fileByte, err = ioutil.ReadFile(filename)
+	if err != nil {
+		return fileByte, err
+	}
+
 	err = os.Remove(filename)
 	if err != nil {
 		log.Println("ERROR WHEN REMOVING FILE")
 	}
 
-	fileByte, err = ioutil.ReadFile(filename)
-	if err != nil {
-		return fileByte, err
-	}
 	return fileByte, nil
 }
 

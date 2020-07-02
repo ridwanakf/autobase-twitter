@@ -5,6 +5,16 @@ server:
   write_timeout_seconds: 5
 
 params:
+  keyword: ""                 # keyword to trigger DM to be tweeted
+  message_count: 10           # amount of DMs retrieved in a one time
+  message_response:           # response reply DM
+    success: ""                 # if success
+    failed: ""                  # if failed / error
+    incorrect: ""               # if keyword incorrect
+  delay_duration:             # duration delay of operation (in second)
+    interval: 60                # duration delay for every time DMs retrieved
+    sleep: 300                  # duration delay if DM is empty
+    rate_limit: 60              # duration delay if reach Twitter API Rate Limit
 
 twitter_key:
   consumer_key: ""
