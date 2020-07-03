@@ -50,13 +50,13 @@ func Start(app *app.AutobaseApp) {
 			}
 		}
 
-		var (
-			incorrectMessages []twitter.DirectMessageEvent
-			successMessages   []twitter.DirectMessageEvent
-			failedMessages    []twitter.DirectMessageEvent
-		)
-
 		if len(messages) > 0 {
+			var (
+				incorrectMessages []twitter.DirectMessageEvent
+				successMessages   []twitter.DirectMessageEvent
+				failedMessages    []twitter.DirectMessageEvent
+			)
+
 			// Filter correct formatted messages
 			correctMessages, temp := svc.FilterMessage(keyword, messages)
 			incorrectMessages = temp
@@ -66,7 +66,9 @@ func Start(app *app.AutobaseApp) {
 				id := message.ID
 				if userID == message.Message.SenderID {
 					err = svc.DeleteMessage(id)
-					log.Println(err)
+					if err != nil {
+						log.Println(err)
+					}
 					continue
 				}
 
@@ -79,18 +81,18 @@ func Start(app *app.AutobaseApp) {
 				}
 				successMessages = append(successMessages, message)
 			}
+			// Delete and send message response in goroutine
+			go func() {
+				svc.CleanMessages(successMessages, successMessageResponse)
+				svc.CleanMessages(failedMessages, failedMessageResponse)
+				svc.CleanMessages(incorrectMessages, incorrectMessageResponse)
+			}()
 		} else {
 			log.Printf("There is no new DM. Will sleep for %v.", sleepDuration)
 			time.Sleep(sleepDuration)
+			continue
 		}
-
-		// Delete and send message response in goroutine
-		go func() {
-			svc.CleanMessages(successMessages, successMessageResponse)
-			svc.CleanMessages(failedMessages, failedMessageResponse)
-			svc.CleanMessages(incorrectMessages, incorrectMessageResponse)
-		}()
-		log.Printf("Success retrieving %d DMs. Will pause for %v.", int(math.Min(float64(len(messages)), 10)), intervalDuration)
+		log.Printf("Success retrieving %d DMs. Will pause for %v.", int(math.Min(float64(len(messages)), float64(messageCount))), intervalDuration)
 		time.Sleep(intervalDuration)
 	}
 
