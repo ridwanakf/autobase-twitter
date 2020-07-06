@@ -35,7 +35,7 @@ func NewAutobaseGateway(cfg config.TwitterKey) *AutobaseGateway {
 	}
 }
 
-func (g *AutobaseGateway) GetUserInfo() (twitter.User, error) {
+func (g *AutobaseGateway) GetCurrentUserInfo() (twitter.User, error) {
 	user, _, err := g.twitterClient.Accounts.VerifyCredentials(nil)
 	if err != nil {
 		return twitter.User{}, err

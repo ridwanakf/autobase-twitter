@@ -2,11 +2,13 @@ package internal
 
 import (
 	"github.com/dghubble/go-twitter/twitter"
+	"github.com/ridwanakf/autobase-twitter/internal/entity"
 )
 
+// AutobaseUC is a interface containing a collection of methods for interacting with Direct Messages and Tweets.
 type AutobaseUC interface {
-	// GetUserInfo is a method to get current user info
-	GetUserInfo() (twitter.User, error)
+	// GetCurrentUserInfo is a method to get current user info
+	GetCurrentUserInfo() (twitter.User, error)
 
 	// ReadBatchMessage is a method to get `count` latest Direct Messages
 	ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error)
@@ -34,4 +36,13 @@ type AutobaseUC interface {
 
 	// ProcessTweet is a method to process a single Tweet
 	ProcessTweet(messages twitter.DirectMessageEvent) (twitter.Tweet, error)
+}
+
+// ArchiveUC is a interface containing a collection of methods for saving Direct Messages in database for archive.
+type ArchiveUC interface {
+	GetAllMessages() ([]entity.Message, error)
+	GetMessageByUserID(userID string) ([]entity.Message, error)
+	GetMessageByUsername(username string) ([]entity.Message, error)
+	SaveMessage(userID string, message entity.Message) error
+	ConvertMessage(input twitter.DirectMessageEvent) entity.Message
 }

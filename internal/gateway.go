@@ -6,7 +6,7 @@ import (
 )
 
 type AutobaseGW interface {
-	GetUserInfo() (twitter.User, error)
+	GetCurrentUserInfo() (twitter.User, error)
 	ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error)
 	ReadMessage(messageID string) (twitter.DirectMessageEvent, error)
 	SendMessage(params twitter.DirectMessageEventMessage) error
