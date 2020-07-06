@@ -5,8 +5,8 @@ import (
 )
 
 type AutobaseUC interface {
-	// GetUserInfo is a method to get current user info
-	GetUserInfo() (twitter.User, error)
+	// GetCurrentUserInfo is a method to get current user info
+	GetCurrentUserInfo() (twitter.User, error)
 
 	// ReadBatchMessage is a method to get `count` latest Direct Messages
 	ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error)

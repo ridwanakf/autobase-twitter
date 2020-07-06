@@ -19,8 +19,8 @@ func NewAutobaseUsecase(gateway internal.AutobaseGW) *AutobaseUsecase {
 	}
 }
 
-func (u *AutobaseUsecase) GetUserInfo() (twitter.User, error) {
-	return u.gw.GetUserInfo()
+func (u *AutobaseUsecase) GetCurrentUserInfo() (twitter.User, error) {
+	return u.gw.GetCurrentUserInfo()
 }
 
 func (u *AutobaseUsecase) ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error) {

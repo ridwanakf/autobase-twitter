@@ -17,7 +17,7 @@ func NewWorkerService(app *app.AutobaseApp) *WorkerService {
 }
 
 func (s *WorkerService) GetUserInfo() (twitter.User, error) {
-	return s.uc.GetUserInfo()
+	return s.uc.GetCurrentUserInfo()
 }
 
 func (s *WorkerService) GetMessages(count int) ([]twitter.DirectMessageEvent, error) {
