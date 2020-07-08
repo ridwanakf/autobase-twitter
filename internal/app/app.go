@@ -1,16 +1,17 @@
 package app
 
 import (
-	"gopkg.in/yaml.v2"
 	"os"
 
 	"github.com/caarlos0/env/v6"
 	"github.com/pkg/errors"
 	"github.com/ridwanakf/autobase-twitter/constant"
 	"github.com/ridwanakf/autobase-twitter/internal/app/config"
+	"gopkg.in/yaml.v2"
 )
 
 type AutobaseApp struct {
+	Repos    *Repos
 	UseCases *Usecases
 	Gateways *Gateways
 
@@ -27,6 +28,11 @@ func NewAutobaseApp() (*AutobaseApp, error) {
 
 	app.Cfg = cfg
 
+	app.Repos, err = newRepos(&cfg)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error initializing repo")
+	}
+
 	app.Gateways = newGateways(&cfg)
 
 	app.UseCases = newUsecases(app.Gateways, &cfg)
@@ -37,8 +43,9 @@ func NewAutobaseApp() (*AutobaseApp, error) {
 func (a *AutobaseApp) Close() []error {
 	var errs []error
 
-	errs = append(errs, a.Gateways.Close()...)
+	errs = append(errs, a.Repos.Close()...)
 	errs = append(errs, a.UseCases.Close()...)
+	errs = append(errs, a.Gateways.Close()...)
 
 	return errs
 }
