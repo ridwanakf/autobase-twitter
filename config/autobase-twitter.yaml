@@ -5,9 +5,36 @@ server:
   write_timeout_seconds: 5
 
 params:
+  keyword: ""                 # keyword to trigger DM to be tweeted
+  message_count: 10           # amount of DMs retrieved in a one time
+  message_response:           # response reply DM
+    success: ""                 # if success
+    failed: ""                  # if failed / error
+    incorrect: ""               # if keyword incorrect
+  delay_duration:             # duration delay of operation (in second)
+    interval: 60                # duration delay for every time DMs retrieved
+    sleep: 300                  # duration delay if DM is empty
+    rate_limit: 60              # duration delay if reach Twitter API Rate Limit
 
 twitter_key:
   consumer_key: ""
   consumer_secret: ""
   access_token: ""
   access_token_secret: ""
+
+archive: false                # whether to archive DMs to database. Set to true if want to archive, false otherwise
+
+database:                     # database config if choose to archive DMs, please provide your own choice of Database and also provide the config file and its initialization method
+  firebase:
+    firebase_admin:             # firebase admin SDK credentials obtained from https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk. Please copy each field from the given json format to this file
+      type: ""
+      project_id: ""
+      private_key_id: ""
+      private_key: ""
+      client_email: ""
+      client_id: ""
+      auth_uri: ""
+      token_uri: ""
+      auth_provider_x509_cert_url: ""
+      client_x509_cert_url: ""
+    database_url: ""

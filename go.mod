@@ -3,6 +3,9 @@ module github.com/ridwanakf/autobase-twitter
 go 1.13
 
 require (
+	cloud.google.com/go/firestore v1.2.0 // indirect
+	cloud.google.com/go/storage v1.10.0 // indirect
+	firebase.google.com/go v3.13.0+incompatible
 	github.com/caarlos0/env/v6 v6.3.0
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
 	github.com/dghubble/oauth1 v0.6.0
@@ -19,6 +22,7 @@ require (
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344 // indirect
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3 // indirect
+	google.golang.org/api v0.28.0
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )

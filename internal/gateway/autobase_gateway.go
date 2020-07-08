@@ -35,7 +35,7 @@ func NewAutobaseGateway(cfg config.TwitterKey) *AutobaseGateway {
 	}
 }
 
-func (g *AutobaseGateway) GetUserInfo() (twitter.User, error) {
+func (g *AutobaseGateway) GetCurrentUserInfo() (twitter.User, error) {
 	user, _, err := g.twitterClient.Accounts.VerifyCredentials(nil)
 	if err != nil {
 		return twitter.User{}, err
@@ -76,16 +76,8 @@ func (g *AutobaseGateway) DeleteMessage(messageID string) error {
 	return err
 }
 
-func (g *AutobaseGateway) Tweet(text string) (twitter.Tweet, error) {
-	tweet, _, err := g.twitterClient.Statuses.Update(text, nil)
-	if err != nil {
-		return twitter.Tweet{}, err
-	}
-	return *tweet, nil
-}
-
-func (g *AutobaseGateway) TweetWithMedia(text string, params twitter.StatusUpdateParams) (twitter.Tweet, error) {
-	tweet, _, err := g.twitterClient.Statuses.Update(text, &params)
+func (g *AutobaseGateway) Tweet(text string, params *twitter.StatusUpdateParams) (twitter.Tweet, error) {
+	tweet, _, err := g.twitterClient.Statuses.Update(text, params)
 	if err != nil {
 		return twitter.Tweet{}, err
 	}
@@ -105,6 +97,8 @@ func (g *AutobaseGateway) DownloadMedia(url string, mediaType string) ([]byte, e
 		filename = "video.mp4"
 	case "theTypeOfGifs":
 		filename = "animation.gif"
+	default:
+		filename = "image.png"
 	}
 
 	file, err := os.Create(filename)
@@ -124,15 +118,16 @@ func (g *AutobaseGateway) DownloadMedia(url string, mediaType string) ([]byte, e
 	}
 	defer file.Close()
 
+	fileByte, err = ioutil.ReadFile(filename)
+	if err != nil {
+		return fileByte, err
+	}
+
 	err = os.Remove(filename)
 	if err != nil {
 		log.Println("ERROR WHEN REMOVING FILE")
 	}
 
-	fileByte, err = ioutil.ReadFile(filename)
-	if err != nil {
-		return fileByte, err
-	}
 	return fileByte, nil
 }
 
