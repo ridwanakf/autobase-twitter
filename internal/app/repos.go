@@ -7,14 +7,14 @@ import (
 )
 
 type Repos struct {
-	AutobaseRepo internal.AutobaseRepo
+	ArchiveRepo internal.ArchiveRepo
 }
 
 func newRepos(cfg *config.Config) (*Repos, error) {
 	// Check if archive feature is enabled
 	if !cfg.UseArchive {
 		return &Repos{
-			AutobaseRepo: nil,
+			ArchiveRepo: nil,
 		}, nil
 	}
 
@@ -25,7 +25,7 @@ func newRepos(cfg *config.Config) (*Repos, error) {
 	}
 
 	return &Repos{
-		AutobaseRepo: repo,
+		ArchiveRepo: repo,
 	}, nil
 }
 
