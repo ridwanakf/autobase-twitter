@@ -6,7 +6,7 @@ type Database struct {
 
 type Firebase struct {
 	FirebaseAdmin FirebaseAdminSDKCred `yaml:"firebase_admin"`
-	DatabaseURL   string               `yaml:"database_url"`
+	DatabaseURL   string               `yaml:"database_url" env:"FIREBASE_RTDB_URL"`
 }
 
 type FirebaseAdminSDKCred struct {
