@@ -97,11 +97,28 @@ func (db *RealtimeDatabase) GetMessageByUsername(username string) ([]entity.Mess
 	return db.GetMessageByUserID(userID)
 }
 
-func (db *RealtimeDatabase) SaveMessage(userID string, message entity.Message) error {
-	ref := db.client.NewRef(MessageRef)
-	uidRef := ref.Child(userID)
-	if err := uidRef.Set(db.ctx, message); err != nil {
+func (db *RealtimeDatabase) SaveMessage(sender entity.User, message entity.Message) error {
+	userID := sender.UserID
+
+	// Retrieve old messages
+	messages, err := db.GetMessageByUserID(userID)
+	if err != nil {
 		return err
 	}
+	messages = append(messages, message)
+
+	// Push messages
+	ref := db.client.NewRef(MessageRef)
+	uidRef := ref.Child(userID)
+	if err := uidRef.Set(db.ctx, messages); err != nil {
+		return err
+	}
+
+	// Save userID reference (FIREBASE ONLY)
+	mapRef := ref.Child(UsernameMapRef)
+	if err := mapRef.Set(db.ctx, sender.Username); err != nil {
+		return err
+	}
+
 	return nil
 }
