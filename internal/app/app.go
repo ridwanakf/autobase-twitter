@@ -35,7 +35,7 @@ func NewAutobaseApp() (*AutobaseApp, error) {
 
 	app.Gateways = newGateways(&cfg)
 
-	app.UseCases = newUsecases(app.Gateways, &cfg)
+	app.UseCases = newUsecases(app.Repos, app.Gateways, &cfg)
 
 	return app, nil
 }
