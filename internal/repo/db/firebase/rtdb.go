@@ -3,6 +3,7 @@ package firebase
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/db"
@@ -18,6 +19,9 @@ type RealtimeDatabase struct {
 }
 
 func NewRealtimeDatabase(cfg config.Firebase) (*RealtimeDatabase, error) {
+	// Fix \n in private key
+	cfg.FirebaseAdmin.PrivateKey = strings.Replace(cfg.FirebaseAdmin.PrivateKey, "\\n", "\n", -1)
+
 	// Construct credential in json format
 	credByte, err := json.Marshal(cfg.FirebaseAdmin)
 	if err != nil {
