@@ -52,17 +52,25 @@ func (uc *ArchiveUsecase) SaveMessage(sender entity.User, message twitter.Direct
 }
 
 func (uc *ArchiveUsecase) ConvertMessage(sender entity.User, message twitter.DirectMessageEvent) (entity.Message, error) {
+	senderID := sender.UserID
+	senderUsername := sender.Username
+	text := message.Message.Data.Text
+	var mediaUrl string
+	if message.Message.Data.Attachment != nil {
+		mediaUrl = message.Message.Data.Attachment.Media.MediaURL
+	}
+
 	i, err := strconv.ParseInt(message.CreatedAt, 10, 64)
 	if err != nil {
 		return entity.Message{}, err
 	}
-	tm := time.Unix(i, 0)
+	createdAt := time.Unix(i/1000, 0).UTC() // Twitter API Timestamp is in millisecond
 
 	return entity.Message{
-		SenderID:         sender.UserID,
-		SenderScreenName: sender.Username,
-		Text:             message.Message.Data.Text,
-		MediaURL:         message.Message.Data.Attachment.Media.MediaURL,
-		CreatedAt:        tm,
+		SenderID:         senderID,
+		SenderScreenName: senderUsername,
+		Text:             text,
+		MediaURL:         mediaUrl,
+		CreatedAt:        createdAt,
 	}, nil
 }
