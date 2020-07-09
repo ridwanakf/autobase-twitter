@@ -23,6 +23,10 @@ func (u *AutobaseUsecase) GetCurrentUserInfo() (twitter.User, error) {
 	return u.gw.GetCurrentUserInfo()
 }
 
+func (u *AutobaseUsecase) GetUserInfoByID(userID string) (twitter.User, error){
+	return u.gw.GetUserInfoByID(userID)
+}
+
 func (u *AutobaseUsecase) ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error) {
 	return u.gw.ReadBatchMessage(count)
 }

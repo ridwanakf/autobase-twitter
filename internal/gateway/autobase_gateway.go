@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -40,6 +41,23 @@ func (g *AutobaseGateway) GetCurrentUserInfo() (twitter.User, error) {
 	if err != nil {
 		return twitter.User{}, err
 	}
+	return *user, nil
+}
+
+func (g *AutobaseGateway) GetUserInfoByID(userID string) (twitter.User, error) {
+	intUID, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		return twitter.User{}, err
+	}
+
+	params := &twitter.UserShowParams{
+		UserID: intUID,
+	}
+	user, _, err := g.twitterClient.Users.Show(params)
+	if err != nil {
+		return twitter.User{}, err
+	}
+
 	return *user, nil
 }
 
