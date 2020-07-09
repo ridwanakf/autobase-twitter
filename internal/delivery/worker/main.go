@@ -27,6 +27,8 @@ func Start(app *app.AutobaseApp) {
 	sleepDuration := time.Second * time.Duration(config.Params.DelayDuration.Sleep)
 	ratelimitDuration := time.Second * time.Duration(config.Params.DelayDuration.RateLimit)
 
+	useArchive := config.UseArchive
+
 	// Init worker service
 	svc := service.GetServices(app)
 
@@ -81,11 +83,11 @@ func Start(app *app.AutobaseApp) {
 				}
 				successMessages = append(successMessages, message)
 			}
-			// Delete and send message response in goroutine
+			// Delete, send message response, and save message (if useArchive is true) in goroutine
 			go func() {
-				svc.CleanMessages(successMessages, successMessageResponse)
-				svc.CleanMessages(failedMessages, failedMessageResponse)
-				svc.CleanMessages(incorrectMessages, incorrectMessageResponse)
+				svc.CleanMessages(successMessages, successMessageResponse, useArchive)
+				svc.CleanMessages(failedMessages, failedMessageResponse, useArchive)
+				svc.CleanMessages(incorrectMessages, incorrectMessageResponse, useArchive)
 			}()
 		} else {
 			log.Printf("There is no new DM. Will sleep for %v.", sleepDuration)
