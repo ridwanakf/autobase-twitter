@@ -2,5 +2,6 @@ package firebase
 
 const (
 	MessageRef     = "messages"
-	UsernameMapRef = "username_map"
+	UserIDMapRef   = "userid_username_map"
+	UsernameMapRef = "username_userid_map"
 )

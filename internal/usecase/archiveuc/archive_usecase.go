@@ -2,6 +2,8 @@ package archiveuc
 
 import (
 	"errors"
+	"strconv"
+	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/ridwanakf/autobase-twitter/internal"
@@ -36,14 +38,39 @@ func (uc *ArchiveUsecase) GetMessageByUsername(username string) ([]entity.Messag
 	return uc.repo.GetMessageByUsername(username)
 }
 
-func (uc *ArchiveUsecase) SaveMessage(userID string, message entity.Message) error {
-	if userID == "" {
+func (uc *ArchiveUsecase) SaveMessage(sender entity.User, message twitter.DirectMessageEvent) error {
+	if sender.UserID == "" {
 		return errors.New("userID can not be empty")
 	}
 
-	return uc.repo.SaveMessage(userID, message)
+	convertedMessage, err := uc.ConvertMessage(sender, message)
+	if err != nil {
+		return err
+	}
+
+	return uc.repo.SaveMessage(sender, convertedMessage)
 }
 
-func (uc *ArchiveUsecase) ConvertMessage(input twitter.DirectMessageEvent) entity.Message {
-	panic("implement me")
+func (uc *ArchiveUsecase) ConvertMessage(sender entity.User, message twitter.DirectMessageEvent) (entity.Message, error) {
+	senderID := sender.UserID
+	senderUsername := sender.Username
+	text := message.Message.Data.Text
+	var mediaUrl string
+	if message.Message.Data.Attachment != nil {
+		mediaUrl = message.Message.Data.Attachment.Media.MediaURL
+	}
+
+	i, err := strconv.ParseInt(message.CreatedAt, 10, 64)
+	if err != nil {
+		return entity.Message{}, err
+	}
+	createdAt := time.Unix(i/1000, 0).UTC() // Twitter API Timestamp is in millisecond
+
+	return entity.Message{
+		SenderID:         senderID,
+		SenderScreenName: senderUsername,
+		Text:             text,
+		MediaURL:         mediaUrl,
+		CreatedAt:        createdAt,
+	}, nil
 }

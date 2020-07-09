@@ -10,6 +10,9 @@ type AutobaseUC interface {
 	// GetCurrentUserInfo is a method to get current user info
 	GetCurrentUserInfo() (twitter.User, error)
 
+	// GetUserInfoByID is a method to get Twitter user info
+	GetUserInfoByID(userID string) (twitter.User, error)
+
 	// ReadBatchMessage is a method to get `count` latest Direct Messages
 	ReadBatchMessage(count int) ([]twitter.DirectMessageEvent, error)
 
@@ -43,6 +46,6 @@ type ArchiveUC interface {
 	GetAllMessages() ([]entity.Message, error)
 	GetMessageByUserID(userID string) ([]entity.Message, error)
 	GetMessageByUsername(username string) ([]entity.Message, error)
-	SaveMessage(userID string, message entity.Message) error
-	ConvertMessage(input twitter.DirectMessageEvent) entity.Message
+	SaveMessage(sender entity.User, message twitter.DirectMessageEvent) error
+	ConvertMessage(sender entity.User, message twitter.DirectMessageEvent) (entity.Message, error)
 }
