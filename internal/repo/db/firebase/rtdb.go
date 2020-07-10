@@ -117,13 +117,13 @@ func (db *RealtimeDatabase) SaveMessage(sender entity.User, message entity.Messa
 
 	// Save userID reference (FIREBASE ONLY)
 	userIDMapRef := db.client.NewRef(UserIDMapRef)
-	if err := userIDMapRef.Set(db.ctx, map[string]string{userID: username}); err != nil {
+	if err := userIDMapRef.Child(userID).Set(db.ctx, username); err != nil {
 		return err
 	}
 
 	// Save username reference (FIREBASE ONLY)
 	usernameMapRef := db.client.NewRef(UsernameMapRef)
-	if err := usernameMapRef.Set(db.ctx, map[string]string{username: userID}); err != nil {
+	if err := usernameMapRef.Child(username).Set(db.ctx, userID); err != nil {
 		return err
 	}
 
