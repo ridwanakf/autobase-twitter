@@ -49,3 +49,11 @@ type ArchiveUC interface {
 	SaveMessage(sender entity.User, message twitter.DirectMessageEvent) error
 	ConvertMessage(sender entity.User, message twitter.DirectMessageEvent) (entity.Message, error)
 }
+
+// RulesUC is a interface containing a collection of methods for filtering which account that can use bot's feature
+type RulesUC interface {
+	ResolveRules(target entity.RulesParam) (bool, error)
+	IsFollower(userID string) (bool, error)
+	IsFollowing(userID string) (bool, error)
+	FollowersCount(userID string) (int32, error)
+}
