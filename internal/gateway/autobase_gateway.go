@@ -162,3 +162,25 @@ func (g *AutobaseGateway) UploadMedia(file []byte, mimetype string) (media.Media
 	}
 	return *response, nil
 }
+
+func (g *AutobaseGateway) UsersRelationship(sourceID string, targetID string) (twitter.Relationship, error) {
+	sourceIDInt, err := strconv.ParseInt(sourceID, 10, 64)
+	if err != nil {
+		return twitter.Relationship{}, err
+	}
+	targetIDInt, err := strconv.ParseInt(targetID, 10, 64)
+	if err != nil {
+		return twitter.Relationship{}, err
+	}
+
+	friendshipParams := &twitter.FriendshipShowParams{
+		SourceID: sourceIDInt,
+		TargetID: targetIDInt,
+	}
+
+	relationship, _, err := g.twitterClient.Friendships.Show(friendshipParams)
+	if err != nil {
+		return twitter.Relationship{}, err
+	}
+	return *relationship, nil
+}
