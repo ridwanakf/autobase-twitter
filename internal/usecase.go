@@ -52,8 +52,8 @@ type ArchiveUC interface {
 
 // RulesUC is a interface containing a collection of methods for filtering which account that can use bot's feature
 type RulesUC interface {
-	ResolveRules(target entity.RulesParam) (bool, error)
-	IsFollower(userID string) (bool, error)
-	IsFollowing(userID string) (bool, error)
+	ResolveRules(param entity.RulesParam) (bool, error)
+	IsFollower(relation twitter.Relationship) bool
+	IsFollowing(relation twitter.Relationship) bool
 	FollowersCount(userID string) (int32, error)
 }

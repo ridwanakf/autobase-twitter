@@ -1,6 +1,7 @@
 package rulesuc
 
 import (
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/ridwanakf/autobase-twitter/internal"
 	"github.com/ridwanakf/autobase-twitter/internal/entity"
 )
@@ -13,35 +14,39 @@ func NewRulesUsecase(gw internal.AutobaseGW) *RulesUsecase {
 	return &RulesUsecase{gw: gw}
 }
 
-func (r *RulesUsecase) ResolveRules(target entity.RulesParam) (bool, error) {
-	isFollower, err := r.IsFollower(target.UserID)
+func (r *RulesUsecase) ResolveRules(param entity.RulesParam) (bool, error) {
+	relationship, err := r.gw.UsersRelationship(param.UserID, param.TargetID)
 	if err != nil {
 		return false, err
 	}
 
-	isFollowing, err:= r.IsFollowing(target.UserID)
-	if err != nil{
+	isFollower := r.IsFollower(relationship)
+	isFollowing := r.IsFollowing(relationship)
+	followersCount, err := r.FollowersCount(param.UserID)
+	if err != nil {
 		return false, err
 	}
 
-	followersCount, err := r.FollowersCount(target.UserID)
-	if err != nil{
-		return false, err
-	}
-
-	return (isFollower || !target.MustBeFollower) &&
-		(isFollowing || !target.MustBeFollowing) &&
-		(followersCount >= target.MinFollowers), nil
+	return (isFollower || !param.MustBeFollower) &&
+		(isFollowing || !param.MustBeFollowing) &&
+		(followersCount >= param.MinFollowers), nil
 }
 
-func (r *RulesUsecase) IsFollower(userID string) (bool, error) {
-	panic("implement me")
+// Is Target Follows User
+func (r *RulesUsecase) IsFollower(relation twitter.Relationship) bool {
+	return relation.Target.Following
 }
 
-func (r *RulesUsecase) IsFollowing(userID string) (bool, error) {
-	panic("implement me")
+// Is User Follows Target
+func (r *RulesUsecase) IsFollowing(relation twitter.Relationship) bool {
+	return relation.Source.Following
 }
 
 func (r *RulesUsecase) FollowersCount(userID string) (int32, error) {
-	panic("implement me")
+	user, err := r.gw.GetUserInfoByID(userID)
+	if err != nil{
+		return 0, err
+	}
+
+	return int32(user.FollowersCount), nil
 }
