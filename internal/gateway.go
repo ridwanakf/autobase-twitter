@@ -15,4 +15,5 @@ type AutobaseGW interface {
 	Tweet(text string, params *twitter.StatusUpdateParams) (twitter.Tweet, error)
 	DownloadMedia(url string, mediaType string) ([]byte, error)
 	UploadMedia(file []byte, mimetype string) (media.Media, error)
+	UsersRelationship(sourceID string, targetID string) (twitter.Relationship, error)
 }

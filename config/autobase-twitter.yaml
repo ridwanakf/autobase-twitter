@@ -38,3 +38,8 @@ database:                     # database config if choose to archive DMs, please
       auth_provider_x509_cert_url: ""
       client_x509_cert_url: ""
     database_url: ""
+
+rules:                        # rules are a set of..rules that define a criteria of account that able to use bot's feature
+  must_follower: false          # follower of the bot's account
+  must_following: false         # following of the bot's account
+  min_followers: 0               # account minimum follower
